@@ -36,4 +36,5 @@ public class Panel_Test : Panel_Base
 
 		GameManager.Scene.LoadScene(Enums.SceneName.Title);
 	}
+
 }

@@ -9,7 +9,7 @@ public class Popup_Default : Popup_Base
 	Button btn_Close;
 
 	TMP_Text txtmp_Title;
-	TMP_Text txtmp_Description;
+	TMP_Text txtmp_Description; 
 
 	public ModalType modalType = ModalType.ConfirmCancel;
 

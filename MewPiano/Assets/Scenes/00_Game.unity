@@ -710,7 +710,7 @@ MonoBehaviour:
   isInitialized: 0
   pianoObject: {fileID: 2872096368461929326, guid: 22e400eda2f99ee449640f4702935693, type: 3}
   pianoParent: {fileID: 37129294}
-  pianoCount: 66
+  pianoCount: 44
 --- !u!1 &691645309
 GameObject:
   m_ObjectHideFlags: 0

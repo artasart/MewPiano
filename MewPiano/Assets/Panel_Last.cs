@@ -36,14 +36,7 @@ public class Panel_Last : Panel_Base
         test.transform.localPosition = Vector3.zero;
         test.transform.localScale = Vector3.one;
 
-        // Set the button's color based on its index (use alpha value)
-        Image buttonImage = test.GetComponent<Image>();
-        if (buttonImage != null)
-        {
-            // Set the color based on the index, for example, varying the alpha value
-            float alphaValue = Mathf.Clamp01(index / (float)pianoCount); // Normalize index to [0,1]
-            buttonImage.color = new Color(1f, 1f, 1f, alphaValue); // R, G, B = 1 (white), A = alpha
-        }
+        
 
         // Add the onClick listener
         test.GetComponent<Button>().onClick.AddListener(() => Onclick_Piano(index));

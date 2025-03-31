@@ -12,13 +12,6 @@ public class Panel_Last : Panel_Base
     public GameObject pianoObject_black;
     public Transform piano_Black_Parent;
 
-    public GameObject noteObject;   // 계이름 (PNG) 프리팹
-    public Transform noteParent;    // 계이름이 들어갈 부모 패널
-    public Transform noteParent_Black;
-
-    public GameObject noteObject_S; 
-    public Transform noteParent_S;  
-
     protected override void Awake()
     {
         base.Awake();
@@ -26,7 +19,9 @@ public class Panel_Last : Panel_Base
 
     public int pianoCount = 44;  // 건반 개수
     public int startIndex = 3;
-    public Sprite[] noteSprites; // 계이름 이미지 배열 (C~B)
+
+    // 계이름 음계 배열
+    private string[] noteNames = new string[] { "C", "D", "E", "F", "G", "A", "B" };
 
     public void Update()
     {
@@ -38,8 +33,6 @@ public class Panel_Last : Panel_Base
             {
                 MakePiano(i);
                 MakePiano_Black(i);
-                MakeNote(i);
-                MakeNote_S(i);
             }
         }
     }
@@ -49,46 +42,61 @@ public class Panel_Last : Panel_Base
         var piano = Instantiate(pianoObject, pianoParent);
         piano.transform.localPosition = Vector3.zero;
         piano.transform.localScale = Vector3.one;
-        piano.GetComponent<Button>().onClick.AddListener(() => Onclick_Piano(index));
+
+        int noteIndex = (startIndex + index) % noteNames.Length;
+        string noteName = noteNames[noteIndex];
+
+        TextMeshProUGUI buttonText = piano.GetComponentInChildren<TextMeshProUGUI>();
+        if (buttonText != null)
+        {
+            buttonText.text = noteName;
+        }
+
+        // 흰 건반에 대한 설정
+        var pianoButton = piano.GetComponent<PianoButton>();
+        if (pianoButton != null)
+        {
+            pianoButton.SetButtonIndex(index, false);  // 흰 건반은 false
+        }
+
     }
 
     public void MakePiano_Black(int index)
     {
+        int notePosition = (startIndex + index) % 7;
+        int noteIndex = (startIndex + index) % noteNames.Length;
+        string noteName = noteNames[noteIndex];
+
+        if (notePosition == 2 || notePosition == 6)
+        {
+            // 빈 투명 오브젝트를 추가해서 간격 유지
+            var emptySpace = new GameObject("EmptySpace");
+            emptySpace.transform.SetParent(piano_Black_Parent);
+            emptySpace.AddComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+            return;
+        }
+
         var piano_black = Instantiate(pianoObject_black, piano_Black_Parent);
         piano_black.transform.localPosition = Vector3.zero;
         piano_black.transform.localScale = Vector3.one;
-        piano_black.GetComponent<Button>().onClick.AddListener(() => Onclick_Piano(index));
+
+
+        TextMeshProUGUI[] buttonTexts = piano_black.GetComponentsInChildren<TextMeshProUGUI>();
+        if (buttonTexts.Length > 1)
+        {
+            // #말고 계이름만 가능
+            TextMeshProUGUI buttonText = buttonTexts[0];
+            buttonText.text = noteName;
+        }
+
+        // 검은 건반에 대한 설정
+        var pianoButtonBlack = piano_black.GetComponent<PianoButton>();
+        if (pianoButtonBlack != null)
+        {
+            pianoButtonBlack.SetButtonIndex(index, true);  // 검은 건반은 true
+        }
     }
 
-    public void MakeNote(int index)
-    {
-        var note = Instantiate(noteObject, noteParent);
-        note.transform.localPosition = Vector3.zero;
-        note.transform.localScale = Vector3.one;
-
-        var note_black = Instantiate(noteObject, noteParent_Black);
-        note_black.transform.localPosition = Vector3.zero;
-        note_black.transform.localScale = Vector3.one;
-
-        // 시작 인덱스 설정
-        int noteIndex = (startIndex + index) % noteSprites.Length;
-        note.GetComponent<Image>().sprite = noteSprites[noteIndex];
-        note_black.GetComponent<Image>().sprite = noteSprites[noteIndex];
-    }
-
-
-    public void MakeNote_S(int index)
-    {
-        var note_S = Instantiate(noteObject_S, noteParent_S); 
-        note_S.transform.localPosition = Vector3.zero;
-        note_S.transform.localScale = Vector3.one;
-
-    }
-
-    private void Onclick_Piano(int index)
-    {
-        Debug.Log($"{index} 번째 건반 눌림");
-    }
 
     private void DestroyChild()
     {
@@ -96,23 +104,8 @@ public class Panel_Last : Panel_Base
         {
             Destroy(item.gameObject);
         }
-        foreach (Transform item in noteParent)
-        {
-            Destroy(item.gameObject);
-        }
-
-        foreach (Transform item in noteParent_Black)
-        {
-            Destroy(item.gameObject);
-        }
 
         foreach (Transform item in piano_Black_Parent)
-        {
-            Destroy(item.gameObject);
-        }
-
-     
-        foreach (Transform item in noteParent_S)
         {
             Destroy(item.gameObject);
         }

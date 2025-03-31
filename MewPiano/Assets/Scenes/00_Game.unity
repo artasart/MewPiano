@@ -521,8 +521,8 @@ MonoBehaviour:
   pianoParent: {fileID: 37129294}
   pianoObject_black: {fileID: 2872096368461929326, guid: 7d40eae35c8405646bfb23e0d9d265ec, type: 3}
   piano_Black_Parent: {fileID: 1605731318}
-  pianoCount: 44
-  startIndex: 0
+  pianoCount: 26
+  startIndex: 3
 --- !u!1 &691645309
 GameObject:
   m_ObjectHideFlags: 0
@@ -1119,11 +1119,11 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 2
   m_Spacing: 3
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
+  m_ChildControlWidth: 0
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0

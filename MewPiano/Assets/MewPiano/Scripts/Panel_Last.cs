@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 public class Panel_Last : Panel_Base
 {
-    public GameObject pianoObject;  // 건반 프리팹
-    public Transform pianoParent;   // 건반이 들어갈 부모 패널
+    public GameObject pianoObject;  // 흰 건반 프리팹
+    public Transform pianoParent;   // 흰 건반이 들어갈 부모 패널
 
-    public GameObject pianoObject_black;
-    public Transform piano_Black_Parent;
+    public GameObject pianoObject_black;  // 검은 건반 프리팹
+    public Transform piano_Black_Parent;  // 검은 건반이 들어갈 부모 패널
 
     protected override void Awake()
     {
@@ -52,13 +52,11 @@ public class Panel_Last : Panel_Base
             buttonText.text = noteName;
         }
 
-        // 흰 건반에 대한 설정
         var pianoButton = piano.GetComponent<PianoButton>();
         if (pianoButton != null)
         {
             pianoButton.SetButtonIndex(index, false);  // 흰 건반은 false
         }
-
     }
 
     public void MakePiano_Black(int index)
@@ -72,7 +70,18 @@ public class Panel_Last : Panel_Base
             // 빈 투명 오브젝트를 추가해서 간격 유지
             var emptySpace = new GameObject("EmptySpace");
             emptySpace.transform.SetParent(piano_Black_Parent);
-            emptySpace.AddComponent<RectTransform>().sizeDelta = new Vector2(0, 0);
+            RectTransform emptyRect = emptySpace.AddComponent<RectTransform>();
+
+            // 검은 건반 크기와 동일하게 설정
+            if (pianoObject_black != null)
+            {
+                RectTransform blackKeyRect = pianoObject_black.GetComponent<RectTransform>();
+                if (blackKeyRect != null)
+                {
+                    emptyRect.sizeDelta = blackKeyRect.sizeDelta;
+                    emptyRect.localScale = blackKeyRect.localScale;
+                }
+            }
             return;
         }
 
@@ -80,23 +89,19 @@ public class Panel_Last : Panel_Base
         piano_black.transform.localPosition = Vector3.zero;
         piano_black.transform.localScale = Vector3.one;
 
-
         TextMeshProUGUI[] buttonTexts = piano_black.GetComponentsInChildren<TextMeshProUGUI>();
         if (buttonTexts.Length > 1)
         {
-            // #말고 계이름만 가능
             TextMeshProUGUI buttonText = buttonTexts[0];
             buttonText.text = noteName;
         }
 
-        // 검은 건반에 대한 설정
         var pianoButtonBlack = piano_black.GetComponent<PianoButton>();
         if (pianoButtonBlack != null)
         {
             pianoButtonBlack.SetButtonIndex(index, true);  // 검은 건반은 true
         }
     }
-
 
     private void DestroyChild()
     {

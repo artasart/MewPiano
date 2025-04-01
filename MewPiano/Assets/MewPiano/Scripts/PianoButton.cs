@@ -12,6 +12,8 @@ public class PianoButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private int buttonIndex; // 해당 건반의 인덱스
     private bool isBlackKey;  // 검은 건반 여부
 
+    public PianoSoundManager pianoSoundManager; 
+
     private void Awake()
     {
         buttonImage = GetComponent<Image>();
@@ -44,6 +46,11 @@ public class PianoButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
+    public void OnClick()
+    {
+        pianoSoundManager.PlaySound(buttonIndex);
+    }
+
     // 버튼을 뗐을 때 호출됨
     public void OnPointerUp(PointerEventData eventData)
     {
@@ -70,4 +77,6 @@ public class PianoButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         buttonIndex = index;  // 버튼의 인덱스 설정
         isBlackKey = isBlack;  // 검은 건반 여부 설정
     }
+
+
 }

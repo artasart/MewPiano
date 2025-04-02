@@ -1,25 +1,18 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class NoteSpawner : MonoBehaviour
 {
-    public GameObject notePrefab;  // 계이름(PNG) 프리팹
-    public Transform pianoTextGroup; // group_Piano_text 패널
-    public Sprite[] noteSprites;  // 계이름 PNG 배열
+    public GameObject notePrefab;  // 노트 프리팹
+    public Transform spawnPoint;   // 노트가 생성될 위치
+    public float spawnInterval = 1f; // 노트 생성 간격 (초)
 
-    void Start()
+    private void Start()
     {
-        SpawnNotes();
+        InvokeRepeating(nameof(SpawnNote), 0f, spawnInterval);
     }
 
-    void SpawnNotes()
+    private void SpawnNote()
     {
-        string[] noteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-
-        for (int i = 0; i < noteNames.Length; i++)
-        {
-            GameObject note = Instantiate(notePrefab, pianoTextGroup);
-            note.GetComponent<Image>().sprite = noteSprites[i];
-        }
+        Instantiate(notePrefab, spawnPoint.position, Quaternion.identity);
     }
 }

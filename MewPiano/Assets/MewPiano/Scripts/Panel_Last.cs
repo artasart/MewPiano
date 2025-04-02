@@ -12,6 +12,9 @@ public class Panel_Last : Panel_Base
     public GameObject pianoObject_black;  // 검은 건반 프리팹
     public Transform piano_Black_Parent;  // 검은 건반이 들어갈 부모 패널
 
+ /*   public GameObject guideLinePrefab; // 가이드라인 프리팹
+    public Transform guideLineParent; // 가이드라인이 들어갈 부모 패널
+ */
     protected override void Awake()
     {
         base.Awake();
@@ -57,6 +60,11 @@ public class Panel_Last : Panel_Base
         {
             pianoButton.SetButtonIndex(index, false);  // 흰 건반은 false
         }
+
+        /* 흰 건반 위에만 가이드라인 추가
+        var guideLine = Instantiate(guideLinePrefab, guideLineParent);
+        guideLine.transform.localPosition = Vector3.zero;
+        guideLine.transform.localScale = Vector3.one;*/
     }
 
     public void MakePiano_Black(int index)
@@ -65,35 +73,37 @@ public class Panel_Last : Panel_Base
         int noteIndex = (startIndex + index) % noteNames.Length;
         string noteName = noteNames[noteIndex];
 
-        if (notePosition == 2 || notePosition == 6)
-        {
-            // 빈 투명 오브젝트를 추가해서 간격 유지
-            var emptySpace = new GameObject("EmptySpace");
-            emptySpace.transform.SetParent(piano_Black_Parent);
-            RectTransform emptyRect = emptySpace.AddComponent<RectTransform>();
-
-            // 검은 건반 크기와 동일하게 설정
-            if (pianoObject_black != null)
-            {
-                RectTransform blackKeyRect = pianoObject_black.GetComponent<RectTransform>();
-                if (blackKeyRect != null)
-                {
-                    emptyRect.sizeDelta = blackKeyRect.sizeDelta;
-                    emptyRect.localScale = blackKeyRect.localScale;
-                }
-            }
-            return;
-        }
+        // 검은 건반이 없는 음 (미#과 시#)이거나 마지막 건반일 경우
+        bool isTransparentKey = (notePosition == 2 || notePosition == 6 || index == pianoCount - 1);
 
         var piano_black = Instantiate(pianoObject_black, piano_Black_Parent);
         piano_black.transform.localPosition = Vector3.zero;
         piano_black.transform.localScale = Vector3.one;
 
+        // 버튼 텍스트 설정 (해당 건반 비활성화)
         TextMeshProUGUI[] buttonTexts = piano_black.GetComponentsInChildren<TextMeshProUGUI>();
-        if (buttonTexts.Length > 1)
+        foreach (var text in buttonTexts)
         {
-            TextMeshProUGUI buttonText = buttonTexts[0];
-            buttonText.text = noteName;
+            if (isTransparentKey)
+            {
+                text.gameObject.SetActive(false); // 텍스트 비활성화
+            }
+            else
+            {
+                text.text = noteName;
+            }
+        }
+
+        if (isTransparentKey)
+        {
+            Image keyImage = piano_black.GetComponent<Image>();
+            if (keyImage != null)
+            {
+                Color transparentColor = keyImage.color;
+                transparentColor.a = 0f;  // 알파값 0으로 설정
+                keyImage.color = transparentColor;
+                keyImage.raycastTarget = false; // Raycast Target 비활성화
+            }
         }
 
         var pianoButtonBlack = piano_black.GetComponent<PianoButton>();
@@ -105,6 +115,8 @@ public class Panel_Last : Panel_Base
 
     private void DestroyChild()
     {
+        Debug.Log("모든 건반 삭제 실행됨");
+
         foreach (Transform item in pianoParent)
         {
             Destroy(item.gameObject);
@@ -114,5 +126,12 @@ public class Panel_Last : Panel_Base
         {
             Destroy(item.gameObject);
         }
+
+       /* foreach (Transform item in guideLineParent)
+        {
+            Destroy(item.gameObject);
+        }
+       */
+        Debug.Log("삭제 완료 후 새 건반 생성 시작");
     }
 }
